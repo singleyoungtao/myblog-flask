@@ -1,11 +1,9 @@
-Dear {{ user.username }},
+你好 {{ user.username }},
 
-To confirm your new email address click on the following link:
+为确认你的新邮箱地址请点击以下链接:
 
 {{ url_for('auth.change_email', token=token, _external=True) }}
 
-Sincerely,
+Tao's blog
 
-The Flasky Team
-
-Note: replies to this email address are not monitored.
+注意：无需回复此邮件。

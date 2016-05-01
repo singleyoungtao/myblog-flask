@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-#!/usr/bin/python
 #-*-coding: utf-8 -*-
 import os
 COV = None
 if os.environ.get('FLASK_COVERAGE'):
     import coverage
-    COV = coverage.coverage(branch=True, include='app/*')
+    COV = coverage.coverage(branch=True, include='app/*')   
+    #启动覆盖检测引擎，buanch开启分支覆盖，include限制分析范围
     COV.start()
 
 from app import create_app, db
@@ -18,7 +18,7 @@ manager = Manager(app)
 migrate = Migrate(app, db)
 
 
-def make_shell_context():
+def make_shell_context():   #shell命令注册的回调函数，注册了程序、数据库实例、模型
     return dict(app=app, db=db, User=User, Follow=Follow, Role=Role,
                 Permission=Permission, Comment=Comment, Post=Post)
 manager.add_command("shell", Shell(make_context=make_shell_context))
@@ -27,7 +27,7 @@ manager.add_command('db', MigrateCommand)
 
 @manager.command
 def test(coverage=False):
-    """Run the unit tests."""
+    """运行单元测试"""
     if coverage and not os.environ.get('FLASK_COVERAGE'):
         import sys
         os.environ['FLASK_COVERAGE'] = '1'
@@ -49,7 +49,7 @@ def test(coverage=False):
 
 @manager.command
 def profile(length=25, profile_dir=None):
-    """Start the application under the code profiler."""
+    """运行代码分析器下的应用程序"""
     from werkzeug.contrib.profiler import ProfilerMiddleware
     app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions=[length],
                                         profile_dir=profile_dir)
@@ -58,7 +58,7 @@ def profile(length=25, profile_dir=None):
 
 @manager.command
 def deploy():
-    """Run deployment tasks."""
+    """运行部署任务"""
     from flask.ext.migrate import upgrade
     from app.models import Role, User
 

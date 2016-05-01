@@ -21,9 +21,9 @@ class Config:
 
     #MAIL_USERNAME = 'singleyoungtao@163.com'#os.environ.get('MAIL_USERNAME')
     #MAIL_PASSWORD = '1jhcfzxwrzslzl'#os.environ.get('MAIL_PASSWORD')
-    FLASKY_MAIL_SUBJECT_PREFIX = '[Flasky]'
+    FLASKY_MAIL_SUBJECT_PREFIX = '[Tao]'
     #FLASKY_MAIL_SENDER = 'FLASKY_ADMIN <singleyoungtao@163.com>'
-    FLASKY_MAIL_SENDER = 'FLASKY_ADMIN <1529115105@qq.com>'
+    FLASKY_MAIL_SENDER = 'Tao‘s blog <1529115105@qq.com>'
     #FLASKY_MAIL_SENDER = 'Flasky Admin <singleyoungtao@163.com>'
     FLASKY_ADMIN =  os.environ.get('FLASKY_ADMIN')
     #FLASKY_ADMIN =  '1529115105@qq.com'
@@ -80,10 +80,30 @@ class ProductionConfig(Config):
         app.logger.addHandler(mail_handler)
 
 
+class HerokuConfig(ProductionConfig):
+    SSL_DISABLE = bool(os.environ.get('SSL_DISABLE'))
+
+    @classmethod
+    def init_app(cls, app):
+        ProductionConfig.init_app(app)
+
+        #处理代理服务器首部
+        from werkzeug.contrib.fixers import ProxyFix
+        app.wsgi_app = ProxyFix(app.wsgi_app)
+
+        #输出到stderr
+        import logging
+        from logging import StreamHandler
+        file_handler = StreamHandler()
+        file_handler.setLevel(logging.WARNING)
+        app.logger.addHandler(file_handler)
+
+
 config = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
     'production': ProductionConfig,
+    'heroku': HerokuConfig,
 
     'default': DevelopmentConfig
 }
